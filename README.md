@@ -16,7 +16,7 @@ This module lets you visualize pandas DataFrames in a more readable format by re
 
 1. **Install directly**:
     ```bash
-    pip install pandas-dataframe-view
+    pip install view_df
     ```
 ### or
 1. **Clone the Repository**:
@@ -27,16 +27,16 @@ This module lets you visualize pandas DataFrames in a more readable format by re
     ```bash
     cd dataframe-viewer
     ```
-
+3. **Copy the file `view_df.py` to your project folder**
 ## Usage
 
 1. Import the Module:
     ```bash
-    from pandas-dataframe-viewer import view_df
+    from view_df import view_df
 2. Create a DataFrame and view it:
     ```bash
     import pandas as pd
-    from pandas-dataframe-viewer import view_df
+    from view_df import view_df
 
     # Example DataFrame
     data = {
