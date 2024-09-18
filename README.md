@@ -49,6 +49,7 @@ This module allows you to visualize pandas DataFrames in a more readable format 
    <p align="center">
   <img src="example_output.png" width="100%" title="hover text">
 </p>
+
 ## Contributing
 Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) for more details.
 
