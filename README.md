@@ -4,13 +4,13 @@ A Python module to display large pandas DataFrames with auto-adjusted column wid
 
 ## Overview
 
-This module allows you to visualize pandas DataFrames in a more readable format by rendering them as HTML tables in your default web browser. It includes basic styling to ensure that column widths are auto-adjusted, making it easier to view large DataFrames without saving them to disk.
+This module lets you visualize pandas DataFrames in a more readable format by rendering them as HTML tables in your default web browser. It includes basic styling to ensure that column widths are auto-adjusted, making it easier to view large DataFrames without saving them to disk.
 
 ## Features
 
 - **Auto-Adjusted Column Widths**: Improves readability by adjusting column widths dynamically.
 - **HTML Rendering**: Displays DataFrames in a formatted HTML table.
-- **No Disk Writes**: Uses temporary files that are automatically deleted after use.
+- **No Disk Writes**: Uses temporary files automatically deleted after use.
 
 ## Installation
 
@@ -20,9 +20,9 @@ This module allows you to visualize pandas DataFrames in a more readable format 
 2. **Navigate to the Project Directory**:
     ```bash
     cd dataframe-viewer
-3. **Install dependendencies**:
+3. **Install dependencies**:
     ```bash
-    pip install -r requirnments.text
+    pip install -r requirements.text
 
 ## Usage
 
@@ -32,7 +32,7 @@ This module allows you to visualize pandas DataFrames in a more readable format 
 2. Create a DataFrame and view it:
     ```bash
     import pandas as pd
-    from df_viewer import view_dataframe
+    from df_viewer import view_df
 
     # Example DataFrame
     data = {
