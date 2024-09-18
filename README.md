@@ -14,25 +14,29 @@ This module lets you visualize pandas DataFrames in a more readable format by re
 
 ## Installation
 
+1. **Install directly**:
+    ```bash
+    pip install pandas-dataframe-view
+    ```
+### or
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/TheKola/df-viewer.git
+   git clone https://github.com/TheKola/dataframe-viewer.git
+   ```
 2. **Navigate to the Project Directory**:
     ```bash
     cd dataframe-viewer
-3. **Install dependencies**:
-    ```bash
-    pip install -r requirements.text
+    ```
 
 ## Usage
 
 1. Import the Module:
     ```bash
-    from df_viewer import view_df
+    from pandas-dataframe-viewer import view_df
 2. Create a DataFrame and view it:
     ```bash
     import pandas as pd
-    from df_viewer import view_df
+    from pandas-dataframe-viewer import view_df
 
     # Example DataFrame
     data = {
