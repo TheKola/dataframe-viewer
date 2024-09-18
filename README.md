@@ -46,53 +46,9 @@ This module allows you to visualize pandas DataFrames in a more readable format 
     view_df(df)
 
 ## Output
-<picture>
-    <style>
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    th, td {
-        padding: 8px;
-        text-align: left;
-        white-space: nowrap;
-    }
-    th {
-        background-color: #f2f2f2;
-    }
-    </style>
-    <table border="1" class="dataframe" >
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Name</th>
-      <th>Occupation</th>
-      <th>Location</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Alice</td>
-      <td>Engineer</td>
-      <td>New York</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Bob</td>
-      <td>Doctor</td>
-      <td>Los Angeles</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Charlie</td>
-      <td>Artist</td>
-      <td>Chicago</td>
-    </tr>
-  </tbody>
-</table>
-</picture>
-
+   <p align="center">
+  <img src="example_output.png" width="100%" title="hover text">
+</p>
 ## Contributing
 Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) for more details.
 
