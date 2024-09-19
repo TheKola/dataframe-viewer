@@ -9,6 +9,7 @@ This module lets you visualize pandas DataFrames in a more readable format by re
 ## Features
 
 - **Auto-Adjusted Column Widths**: Improves readability by adjusting column widths dynamically.
+- **Hightlight Selected Cells**: Row and Column of any selected cell is highlighted for better visuals.
 - **HTML Rendering**: Displays DataFrames in a formatted HTML table.
 - **No Disk Writes**: Uses temporary files automatically deleted after use.
 
