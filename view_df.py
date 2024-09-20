@@ -219,15 +219,49 @@ def view_df(df: pd.DataFrame):
 
     # Function to generate the HTML for filter dropdowns based on unique values in each column
     def generate_filter_html(column_values, col_idx):
-        unique_values = sorted(set(column_values))
+        def make_hashable(item):
+            """
+            Convert unhashable types (like lists, sets, dicts) to hashable and serializable ones (like tuples).
+            Handles nested structures like lists of dictionaries.
+            """
+            if isinstance(item, list) or isinstance(item, set):
+                # Convert lists or sets to tuples, as they are hashable
+                return tuple(make_hashable(i) for i in item)
+            elif isinstance(item, dict):
+                # Convert dictionaries to sorted tuples of key-value pairs
+                return tuple(sorted((k, make_hashable(v)) for k, v in item.items()))
+            else:
+                # Return the item as is if it's already hashable
+                return item
+        
+        def safe_to_string(value):
+            """
+            Safely convert any value to a string for HTML display, handling cases like None, complex objects, etc.
+            """
+            try:
+                return str(value)
+            except Exception as e:
+                return f"Unrepresentable Value ({e})"
+
+        try:
+            # Ensure all column values are hashable before creating a set
+            unique_values = sorted(set(make_hashable(item) for item in column_values))
+        except Exception as e:
+            # Log or handle the error if something goes wrong during the uniqueness check
+            print(f"Error generating unique values for column {col_idx}: {e}")
+            unique_values = sorted(column_values)  # Fallback to sorted values without uniqueness
+        
+        # Generate the filter HTML, ensuring each value is safely converted to a string for display
         filter_html = f'<div class="filter-container">&#9660;<div class="filter-dropdown filter-{col_idx}">'
         for value in unique_values:
-            filter_html += f'<div class="filter-option"><input type="checkbox" value="{value}" onclick="updateFilter({col_idx})">{value}</div>'
+            value_str = safe_to_string(value)
+            filter_html += f'<div class="filter-option"><input type="checkbox" value="{value_str}" onclick="updateFilter({col_idx})">{value_str}</div>'
         filter_html += '</div></div>'
+        
         return filter_html
 
     # Apply the custom formatting to each element in the DataFrame
-    df_formatted = df.applymap(lambda x: '{:.9f}'.format(x).rstrip('0').rstrip('.') if isinstance(x, float) else x)
+    df_formatted = df.map(lambda x: '{:.9f}'.format(x).rstrip('0').rstrip('.') if isinstance(x, float) else x)
     
     # Start building the HTML table with filters
     html = '<button class="clear-filters-button" onclick="clearFilters()">Clear Filters</button><table><thead><tr>'
