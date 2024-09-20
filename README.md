@@ -1,18 +1,18 @@
 # DataFrame Viewer
 
-A Python module to display large pandas DataFrames with auto-adjusted column widths in a web browser.
+A Python module to display large pandas DataFrames with auto-adjusted column widths in a web browser with filtering capability.
 
 ## Overview
 
-This module lets you visualize pandas DataFrames in a more readable format by rendering them as HTML tables in your default web browser. It includes basic styling to ensure that column widths are auto-adjusted, making it easier to view large DataFrames without saving them to disk.
+DataFrame Viewer is a Python module designed to enhance the visualization of large pandas DataFrames by rendering them as interactive HTML tables in your default web browser. With features like auto-adjusted column widths and cell highlighting, this tool significantly improves the readability and accessibility of your data.
 
 ## Features
 
-- **Auto-Adjusted Column Widths**: Improves readability by adjusting column widths dynamically.
-- **Hightlight Selected Cells**: Row and Column of any selected cell is highlighted for better visuals.
-- **HTML Rendering**: Displays DataFrames in a formatted HTML table.
-- **No Disk Writes**: Uses temporary files automatically deleted after use.
-
+- **Filtering Capabilities**: Easily filter data within the DataFrame for targeted analysis, with the option to clear filters.
+- **Auto-Adjusted Column Widths**: Automatically adjusts column widths for better readability, making it easier to analyze large datasets.
+- **Cell Highlighting**: Highlights the selected cell's entire row and column, improving data visibility and navigation.
+- **HTML Rendering**: Displays DataFrames in a beautifully formatted HTML table, enhancing user experience.
+- **No Disk Writes**: Operates using temporary files that are automatically deleted after viewing, ensuring your data remains secure.
 ## Installation
 
 1. **Install directly**:
@@ -40,8 +40,9 @@ This module lets you visualize pandas DataFrames in a more readable format by re
     from view_df import view_df
 
     # Example DataFrame
-    data = {
+     data = {
     'Name': ['Alice', 'Bob', 'Charlie'],
+    'Gender':['Female','Male','Male'],
     'Occupation': ['Engineer', 'Doctor', 'Artist'],
     'Location': ['New York', 'Los Angeles', 'Chicago']
     }
@@ -54,6 +55,12 @@ This module lets you visualize pandas DataFrames in a more readable format by re
    <p align="center">
   <img src="example_output.png" width="100%" title="hover text">
 </p>
+
+## Release Notes
+**v 0.2**: Introduced filtering capabilities and the option to clear filters for a more interactive experience.
+v 0.1.3: Implemented minor formatting changes for improved aesthetics.
+v 0.1.2: Added cell highlighting feature to enhance data visibility.
+v 0.1: Initial release - Displaying DataFrame in web browser.
 
 ## Contributing
 Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) for more details.
