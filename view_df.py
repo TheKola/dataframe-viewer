@@ -233,24 +233,31 @@ def view_df(df: pd.DataFrame):
             else:
                 # Return the item as is if it's already hashable
                 return item
-        
+
         def safe_to_string(value):
             """
             Safely convert any value to a string for HTML display, handling cases like None, complex objects, etc.
             """
             try:
-                return str(value)
+                return str(value) if value is not None else "None"
             except Exception as e:
                 return f"Unrepresentable Value ({e})"
 
+        def safe_sort(values):
+            """
+            Safely sort mixed types by converting non-string types to strings, ensuring that None and
+            other uncomparable types do not cause sorting issues.
+            """
+            return sorted(values, key=lambda x: (x is not None, str(x)))
+
         try:
-            # Ensure all column values are hashable before creating a set
-            unique_values = sorted(set(make_hashable(item) for item in column_values))
+            # Filter out None values before sorting and ensure all column values are hashable
+            unique_values = safe_sort(set(make_hashable(item) for item in column_values))
         except Exception as e:
             # Log or handle the error if something goes wrong during the uniqueness check
             print(f"Error generating unique values for column {col_idx}: {e}")
-            unique_values = sorted(column_values)  # Fallback to sorted values without uniqueness
-        
+            unique_values = safe_sort(item for item in column_values if item is not None)  # Fallback to sorted values without uniqueness
+
         # Generate the filter HTML, ensuring each value is safely converted to a string for display
         filter_html = f'<div class="filter-container">&#9660;<div class="filter-dropdown filter-{col_idx}">'
         for value in unique_values:
@@ -259,7 +266,6 @@ def view_df(df: pd.DataFrame):
         filter_html += '</div></div>'
         
         return filter_html
-
     # Apply the custom formatting to each element in the DataFrame
     df_formatted = df.map(lambda x: '{:.9f}'.format(x).rstrip('0').rstrip('.') if isinstance(x, float) else x)
     
@@ -295,7 +301,7 @@ def view_df(df: pd.DataFrame):
 if __name__ == "__main__":
     data = {
     'Name': ['Alice', 'Bob', 'Charlie'],
-    'Gender':['Female','Male','Male'],
+    'Gender': ['Female', 'Male', 'Male'],
     'Occupation': ['Engineer', 'Doctor', 'Artist'],
     'Location': ['New York', 'Los Angeles', 'Chicago']
     }
