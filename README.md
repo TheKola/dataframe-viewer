@@ -58,7 +58,7 @@ DataFrame Viewer is a Python module designed to enhance the visualization of lar
 
 ## Release Notes
 **v 0.2.2**: Sorted the issue with "None" datatypes, was causing issue when creating filters.\
-v 0.2.1: Sorted the issue with cells containing lists, dictonary, sets.\ 
+v 0.2.1: Sorted the issue with cells containing lists, dictonary, sets.\
 v 0.2: Introduced filtering capabilities and the option to clear filters for a more interactive experience.\
 v 0.1.3: Implemented minor formatting changes for improved aesthetics.\
 v 0.1.2: Added cell highlighting feature to enhance data visibility.\
