@@ -21,7 +21,6 @@ def view_df(df: pd.DataFrame):
     css = """
     <style>
     table {
-        width: 100%;
         border-collapse: collapse;
         overflow-y: auto;
         border: 1px solid black; /* Table border */
@@ -80,7 +79,7 @@ def view_df(df: pd.DataFrame):
     }
     .filter-arrow {
         font-size: 10px;     /* Decrease the font size */
-        color: #666; /* Lighter color */
+        color: #b0b0b0; /* Lighter color */
         margin-left: 5px;
     }
     .clear-filters-button {
@@ -224,9 +223,12 @@ def view_df(df: pd.DataFrame):
             Convert unhashable types (like lists, sets, dicts) to hashable and serializable ones (like tuples).
             Handles nested structures like lists of dictionaries.
             """
-            if isinstance(item, list) or isinstance(item, set):
-                # Convert lists or sets to tuples, as they are hashable
-                return tuple(make_hashable(i) for i in item)
+            if isinstance(item, list):
+                # Convert lists to tuples and tag them as lists
+                return tuple(make_hashable(i) for i in item), 'list'
+            elif isinstance(item, set):
+                # Convert sets to tuples and tag them as sets
+                return tuple(make_hashable(i) for i in item), 'set'
             elif isinstance(item, dict):
                 # Convert dictionaries to sorted tuples of key-value pairs
                 return tuple(sorted((k, make_hashable(v)) for k, v in item.items()))
@@ -239,6 +241,12 @@ def view_df(df: pd.DataFrame):
             Safely convert any value to a string for HTML display, handling cases like None, complex objects, etc.
             """
             try:
+                if isinstance(value, tuple) and len(value) == 2:
+                    # If this is a tagged value, handle it appropriately
+                    if value[1] == 'list':
+                        return str(list(value[0]))  # Convert back to list for display
+                    elif value[1] == 'set':
+                        return str(set(value[0]))  # Convert back to set for display
                 return str(value) if value is not None else "None"
             except Exception as e:
                 return f"Unrepresentable Value ({e})"
@@ -266,6 +274,7 @@ def view_df(df: pd.DataFrame):
         filter_html += '</div></div>'
         
         return filter_html
+    
     # Apply the custom formatting to each element in the DataFrame
     df_formatted = df.map(lambda x: '{:.9f}'.format(x).rstrip('0').rstrip('.') if isinstance(x, float) else x)
     
