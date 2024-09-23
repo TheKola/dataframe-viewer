@@ -59,6 +59,7 @@ def view_df(df: pd.DataFrame):
         min-width: 100px; /* Set a minimum width */
         min-height: 50px; /* Set a minimum height */
         max-height: 50vh; /* Set max height to half the screen height */
+        max-width: calc(100vw - 20px); /* Ensure it does not exceed the viewport width */
 
     }
     .filter-container:hover .filter-dropdown {
@@ -97,11 +98,14 @@ def view_df(df: pd.DataFrame):
         color: #808080;
     }
     .search-box {
-        padding: 5px;
+        padding-left: 10px;
+        padding-top: 5px;
         width: 90%;
         border: white;
         border-radius: 4px;
+        outline: none;
     }
+
     </style>
     <script>
     var originalData = [];
@@ -294,7 +298,7 @@ def view_df(df: pd.DataFrame):
         for value in unique_values:
             value_str = safe_to_string(value)
             filter_html += f'''
-            <div class="filter-option">
+            <div class="filter-option" onclick="this.querySelector('input[type=checkbox]').click();">
                 <input type="checkbox" value="{value_str}" onclick="updateFilter({col_idx})"> {value_str}
             </div>
             '''
