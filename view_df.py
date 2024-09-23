@@ -6,7 +6,7 @@ def view_df(df: pd.DataFrame):
     """
     Converts the given DataFrame to an HTML file with auto-adjusted column widths,
     highlights rows and columns on click, and opens it in the default web browser.
-    Includes multiple-column filtering functionality with checkboxes in each column header.
+    Includes multiple-column filtering functionality with checkboxes in each column header and a search box in the filter dropdown to search for specific options.
     
     Parameters:
     df (pd.DataFrame): The pandas DataFrame to display.
@@ -35,7 +35,7 @@ def view_df(df: pd.DataFrame):
         background-color: #f2f2f2;
         position: sticky;
         top: 0;
-        z-index: 1;
+        z-index: 2;
     }
     .highlight-row {
         background-color: #d3d3d3; /* Light gray for row highlight */
@@ -52,13 +52,14 @@ def view_df(df: pd.DataFrame):
         position: absolute;
         background-color: white;
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
+        z-index: 100;
         overflow-y: auto;
         border: 1px solid black; /* Border for dropdown */
         resize: both; /* Enable resizing */
         min-width: 100px; /* Set a minimum width */
         min-height: 50px; /* Set a minimum height */
         max-height: 50vh; /* Set max height to half the screen height */
+
     }
     .filter-container:hover .filter-dropdown {
         display: block;
@@ -95,6 +96,12 @@ def view_df(df: pd.DataFrame):
         background-color: #D3D3D3;
         color: #808080;
     }
+    .search-box {
+        padding: 5px;
+        width: 90%;
+        border: white;
+        border-radius: 4px;
+    }
     </style>
     <script>
     var originalData = [];
@@ -106,7 +113,7 @@ def view_df(df: pd.DataFrame):
         var rows = document.querySelectorAll('tbody tr');
         rows.forEach(function(row) {
             var rowData = Array.from(row.children).map(function(cell) {
-                return cell.innerText;
+                return cell.innerHTML;
             });
             originalData.push(rowData);
         });
@@ -114,7 +121,7 @@ def view_df(df: pd.DataFrame):
 
     function applyFilters() {
         var tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
+        tbody.innerHTML= '';
 
         originalData.forEach(function(rowData, rowIdx) {
             var displayRow = true;
@@ -130,7 +137,7 @@ def view_df(df: pd.DataFrame):
                 var row = document.createElement('tr');
                 rowData.forEach(function(cellData) {
                     var cell = document.createElement('td');
-                    cell.innerText = cellData;
+                    cell.innerHTML = cellData;
                     row.appendChild(cell);
                 });
                 tbody.appendChild(row);
@@ -194,6 +201,18 @@ def view_df(df: pd.DataFrame):
                 lastClickedRow = rowIdx;
                 lastClickedCol = colIdx;
             });
+        });
+    }
+    function searchFilter(colIdx, searchValue) {
+        var filterOptions = document.querySelectorAll('.filter-' + colIdx + ' .filter-option');
+        searchValue = searchValue.toLowerCase();
+        filterOptions.forEach(function(option) {
+            var label = option.textContent || option.innerText;
+            if (label.toLowerCase().indexOf(searchValue) > -1) {
+                option.style.display = '';
+            } else {
+                option.style.display = 'none';
+            }
         });
     }
 
@@ -267,10 +286,17 @@ def view_df(df: pd.DataFrame):
             unique_values = safe_sort(item for item in column_values if item is not None)  # Fallback to sorted values without uniqueness
 
         # Generate the filter HTML, ensuring each value is safely converted to a string for display
-        filter_html = f'<div class="filter-container">&#9660;<div class="filter-dropdown filter-{col_idx}">'
+        filter_html = f'''
+        <div class="filter-container">&#9660;
+            <div class="filter-dropdown filter-{col_idx}">
+                <input type="text" class="search-box" placeholder="Search..." onkeyup="searchFilter({col_idx}, this.value)">
+        '''
         for value in unique_values:
-            value_str = safe_to_string(value)
-            filter_html += f'<div class="filter-option"><input type="checkbox" value="{value_str}" onclick="updateFilter({col_idx})">{value_str}</div>'
+            filter_html += f'''
+            <div class="filter-option">
+                <input type="checkbox" value="{value}" onclick="updateFilter({col_idx})"> {value}
+            </div>
+            '''
         filter_html += '</div></div>'
         
         return filter_html

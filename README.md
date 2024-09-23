@@ -1,14 +1,14 @@
 # DataFrame Viewer
 
-A Python module to display large pandas DataFrames with auto-adjusted column widths in a web browser with filtering capability.
+A Python module to display large pandas DataFrames with auto-adjusted column widths in a web browser with filtering capability and search option.
 
 ## Overview
 
-DataFrame Viewer is a Python module designed to enhance the visualization of large pandas DataFrames by rendering them as interactive HTML tables in your default web browser. With features like auto-adjusted column widths and cell highlighting, this tool significantly improves the readability and accessibility of your data.
+DataFrame Viewer is a Python module designed to enhance the visualization of large pandas DataFrames by rendering them as interactive HTML tables in your default web browser. With features like auto-adjusted column widths, filtering capability with search option and cell highlighting, this tool significantly improves the readability and accessibility of your data.
 
 ## Features
 
-- **Filtering Capabilities**: Easily filter data within the DataFrame for targeted analysis, with the option to clear filters.
+- **Filtering Capabilities**: Easily filter data within the DataFrame for targeted analysis, with the option to clear filters, with search box.
 - **Auto-Adjusted Column Widths**: Automatically adjusts column widths for better readability, making it easier to analyze large datasets.
 - **Cell Highlighting**: Highlights the selected cell's entire row and column, improving data visibility and navigation.
 - **HTML Rendering**: Displays DataFrames in a beautifully formatted HTML table, enhancing user experience.
@@ -57,7 +57,8 @@ DataFrame Viewer is a Python module designed to enhance the visualization of lar
 </p>
 
 ## Release Notes
-**v 0.2.3** Sorted the issue with filter menu, was not able to differentiate between list and tuple data types.\
+**v 0.2.4** Added search box in the filter menu to help easily search from a lot of data.\
+v 0.2.3 Sorted the issue with filter menu, was not able to differentiate between list and tuple data types.\
 v 0.2.2: Sorted the issue with "None" datatypes, was causing issue when creating filters.\
 v 0.2.1: Sorted the issue with cells containing lists, dictonary, sets.\
 v 0.2: Introduced filtering capabilities and the option to clear filters for a more interactive experience.\
