@@ -292,9 +292,10 @@ def view_df(df: pd.DataFrame):
                 <input type="text" class="search-box" placeholder="Search..." onkeyup="searchFilter({col_idx}, this.value)">
         '''
         for value in unique_values:
+            value_str = safe_to_string(value)
             filter_html += f'''
             <div class="filter-option">
-                <input type="checkbox" value="{value}" onclick="updateFilter({col_idx})"> {value}
+                <input type="checkbox" value="{value_str}" onclick="updateFilter({col_idx})"> {value_str}
             </div>
             '''
         filter_html += '</div></div>'
