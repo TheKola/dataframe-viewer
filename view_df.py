@@ -22,8 +22,7 @@ def view_df(df: pd.DataFrame):
     <style>
     table {
         border-collapse: collapse;
-        overflow-y: auto;
-        border: 1px solid black; /* Table border */
+        border: 1px solid black;
     }
     th, td {
         padding: 8px;
@@ -35,7 +34,7 @@ def view_df(df: pd.DataFrame):
         background-color: #f2f2f2;
         position: sticky;
         top: 0;
-        z-index: 2;
+        z-index: 1;
     }
     .highlight-row {
         background-color: #d3d3d3; /* Light gray for row highlight */
@@ -52,18 +51,27 @@ def view_df(df: pd.DataFrame):
         position: absolute;
         background-color: white;
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 100;
         overflow-y: auto;
         border: 1px solid black; /* Border for dropdown */
         resize: both; /* Enable resizing */
-        min-width: 100px; /* Set a minimum width */
+        min-width: 150px; /* Set a minimum width */
         min-height: 50px; /* Set a minimum height */
         max-height: 50vh; /* Set max height to half the screen height */
-        max-width: calc(100vw - 20px); /* Ensure it does not exceed the viewport width */
-
+        z-index: 10;
+        margin-top: 9px;
+    }
+    .filter-container {
+        position: relative;
+    }
+    .filter-dropdown {
+        left: 0;
     }
     .filter-container:hover .filter-dropdown {
         display: block;
+    }
+    th:last-child .filter-dropdown {
+        right: 0;
+        left: auto;
     }
     .filter-option {
         padding: 8px;
@@ -82,7 +90,8 @@ def view_df(df: pd.DataFrame):
     .filter-arrow {
         font-size: 10px;     /* Decrease the font size */
         color: #b0b0b0; /* Lighter color */
-        margin-left: 5px;
+        margin-left: 1px;
+        cursor: pointer;
     }
     .clear-filters-button {
         margin: 10px 0;
@@ -105,8 +114,8 @@ def view_df(df: pd.DataFrame):
         border-radius: 4px;
         outline: none;
     }
-
     </style>
+
     <script>
     var originalData = [];
     var filters = {};
@@ -148,13 +157,13 @@ def view_df(df: pd.DataFrame):
             }
         });
 
-        // Reapply highlights to the last clicked cell if it exists
-        if (lastClickedRow !== null && lastClickedCol !== null) {
+    // Reapply highlights to the last clicked cell if it exists
+    if (lastClickedRow !== null && lastClickedCol !== null) {
             highlight(lastClickedRow, lastClickedCol);
         }
 
-        // Reattach event listeners to new table cells
-        addClickListeners();
+    // Reattach event listeners to new table cells
+    addClickListeners();
     }
 
     function updateFilter(colIdx) {
@@ -207,6 +216,7 @@ def view_df(df: pd.DataFrame):
             });
         });
     }
+    
     function searchFilter(colIdx, searchValue) {
         var filterOptions = document.querySelectorAll('.filter-' + colIdx + ' .filter-option');
         searchValue = searchValue.toLowerCase();
@@ -218,6 +228,11 @@ def view_df(df: pd.DataFrame):
                 option.style.display = 'none';
             }
         });
+    }
+
+    function toggleDropdown(colIdx) {
+        var dropdown = document.querySelector('.filter-' + colIdx);
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -236,6 +251,57 @@ def view_df(df: pd.DataFrame):
             }
         });
     });
+
+    // Function to close all dropdowns
+    function closeDropdowns() {
+        var dropdowns = document.querySelectorAll('.filter-dropdown');
+        dropdowns.forEach(function(dropdown) {
+            dropdown.style.display = 'none';
+    });
+    }
+
+    document.addEventListener('click', function(event) {
+        // Close all dropdowns if the click is outside of any filter container
+        if (!event.target.closest('.filter-container')) {
+            closeDropdowns();
+        }
+    });
+
+    function toggleDropdown(colIdx) {
+        var dropdown = document.querySelector('.filter-' + colIdx);
+        var isDisplayed = dropdown.style.display === 'block';
+        
+        // Close all dropdowns first
+        closeDropdowns();
+        
+        // Toggle the current dropdown
+        dropdown.style.display = isDisplayed ? 'none' : 'block';
+    }
+
+    // Function to check table width and set dropdown alignment for last column
+    function adjustDropdownAlignment() {
+        var table = document.querySelector('table');
+        var lastColumn = document.querySelector('th:last-child .filter-dropdown');
+        if (table.offsetWidth >= window.innerWidth) {
+            // Align dropdown to left for the last column if table is 100% width
+            lastColumn.style.right = '0';
+            lastColumn.style.left = 'auto';
+        } else {
+            // Reset to default alignment (right)
+            lastColumn.style.left = '0';
+            lastColumn.style.right = 'auto';
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Existing initialization code...
+        adjustDropdownAlignment(); // Call the function to adjust alignment on load
+    });
+
+    window.addEventListener('resize', function() {
+        adjustDropdownAlignment(); // Recheck on window resize
+    });
+
     </script>
     """
 
@@ -291,17 +357,20 @@ def view_df(df: pd.DataFrame):
 
         # Generate the filter HTML, ensuring each value is safely converted to a string for display
         filter_html = f'''
-        <div class="filter-container">&#9660;
+        <div class="filter-container">
+            <span class="filter-arrow" onclick="toggleDropdown({col_idx})">&#9660;</span>
             <div class="filter-dropdown filter-{col_idx}">
                 <input type="text" class="search-box" placeholder="Search..." onkeyup="searchFilter({col_idx}, this.value)">
         '''
         for value in unique_values:
             value_str = safe_to_string(value)
             filter_html += f'''
-            <div class="filter-option" onclick="this.querySelector('input[type=checkbox]').click();">
-                <input type="checkbox" value="{value_str}" onclick="updateFilter({col_idx})"> {value_str}
-            </div>
-            '''
+            <div class="filter-option">
+            <label style="display: block; padding: 1px; cursor: pointer;"> 
+        <input type="checkbox" value="{value_str}" onclick="updateFilter({col_idx});"> {value_str}
+        </label>
+        </div>
+        '''
         filter_html += '</div></div>'
         
         return filter_html
