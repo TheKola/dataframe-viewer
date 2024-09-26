@@ -93,6 +93,12 @@ def view_df(df: pd.DataFrame):
         margin-left: 1px;
         cursor: pointer;
     }
+    .filter-arrow-dark {
+        font-size: 10px;     /* Same size */
+        color: #000000; /* Darker color for active filter */
+        margin-left: 1px;
+        cursor: pointer;
+    }   
     .clear-filters-button {
         margin: 10px 0;
         padding: 8px 12px;
@@ -108,11 +114,26 @@ def view_df(df: pd.DataFrame):
     }
     .search-box {
         padding-left: 10px;
-        padding-top: 5px;
+        padding-top: 10px;
+        padding-bottom: 5px;
         width: 90%;
         border: white;
         border-radius: 4px;
         outline: none;
+        display:block;
+    }
+    [class^="toggle-button"] {
+        padding: 4px 6px;
+        background-color: #808080;
+        color: white;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        display:block;
+    }
+    [class^="toggle-button"]:hover {
+        background-color: #D3D3D3;
+        color: #808080;
     }
     </style>
 
@@ -169,6 +190,15 @@ def view_df(df: pd.DataFrame):
     function updateFilter(colIdx) {
         var checkboxes = document.querySelectorAll('.filter-' + colIdx + ' input');
         filters[colIdx] = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
+
+        // Check if any checkbox is selected in the column and update the arrow color
+        var arrow = document.querySelector('.filter-arrow-' + colIdx);
+        if (filters[colIdx].length > 0) {
+            arrow.classList.add('filter-arrow-dark');  // Darken the arrow if any filter is selected
+        } else {
+            arrow.classList.remove('filter-arrow-dark');  // Reset arrow color if no filters are selected
+        }
+
         applyFilters();
     }
 
@@ -177,6 +207,12 @@ def view_df(df: pd.DataFrame):
         var checkboxes = document.querySelectorAll('input[type="checkbox"]');
         checkboxes.forEach(function(checkbox) {
             checkbox.checked = false; // Uncheck all checkboxes
+        });
+        
+        // Reset the arrow color for all columns
+        var arrows = document.querySelectorAll('.filter-arrow');
+        arrows.forEach(function(arrow) {
+            arrow.classList.remove('filter-arrow-dark');  // Remove dark arrow class
         });
         applyFilters(); // Reapply filters to show original data
     }
@@ -302,6 +338,34 @@ def view_df(df: pd.DataFrame):
         adjustDropdownAlignment(); // Recheck on window resize
     });
 
+   function toggleSelectClearColumn(colIdx) {
+        var checkboxes = document.querySelectorAll('.filter-' + colIdx + ' input[type="checkbox"]');
+        var allSelected = Array.from(checkboxes).every(checkbox => checkbox.checked);  // Check if all are selected
+        
+        if (allSelected) {
+            // Clear all checkboxes (uncheck)
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = false;
+            });
+        } else {
+            // Select all checkboxes (check)
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = true;
+            });
+        }
+        updateFilter(colIdx);  // Apply the changes after toggling
+        updateButtonLabel(colIdx);  // Update the button label based on the state
+        }
+
+    function updateButtonLabel(colIdx) {
+        var checkboxes = document.querySelectorAll('.filter-' + colIdx + ' input[type="checkbox"]');
+        var allSelected = Array.from(checkboxes).every(checkbox => checkbox.checked);
+        var toggleButton = document.querySelector('.toggle-button-' + colIdx);
+            
+        // Update the button label
+        toggleButton.innerHTML = allSelected ? 'Clear Filter' : 'Select All';
+        }
+
     </script>
     """
 
@@ -355,22 +419,24 @@ def view_df(df: pd.DataFrame):
             print(f"Error generating unique values for column {col_idx}: {e}")
             unique_values = safe_sort(item for item in column_values if item is not None)  # Fallback to sorted values without uniqueness
 
-        # Generate the filter HTML, ensuring each value is safely converted to a string for display
+       # Create the filter HTML with button on top and search box below it
         filter_html = f'''
         <div class="filter-container">
-            <span class="filter-arrow" onclick="toggleDropdown({col_idx})">&#9660;</span>
+            <span class="filter-arrow filter-arrow-{col_idx}" onclick="toggleDropdown({col_idx})">&#9660;</span>
             <div class="filter-dropdown filter-{col_idx}">
+                <button class="toggle-button toggle-button-{col_idx}" onclick="toggleSelectClearColumn({col_idx})">Select All</button>
                 <input type="text" class="search-box" placeholder="Search..." onkeyup="searchFilter({col_idx}, this.value)">
         '''
         for value in unique_values:
             value_str = safe_to_string(value)
             filter_html += f'''
             <div class="filter-option">
-            <label style="display: block; padding: 1px; cursor: pointer;"> 
-        <input type="checkbox" value="{value_str}" onclick="updateFilter({col_idx});"> {value_str}
-        </label>
-        </div>
-        '''
+                <label style="display: block; padding: 1px; cursor: pointer;">
+                    <input type="checkbox" value="{value_str}" onclick="updateFilter({col_idx}); updateButtonLabel({col_idx});"> {value_str}
+                </label>
+            </div>
+            '''
+        
         filter_html += '</div></div>'
         
         return filter_html
